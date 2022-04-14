@@ -23,3 +23,11 @@ if(!function_exists('env')) {
         return (new \DatabaseDrivers\Env('.env'))->getValue($name) ?: $default;
     }
 }
+
+if(!function_exists('pdo')) {
+
+    function pdo()
+    {
+        return (new \DatabaseDrivers\PDO\ConnectorFactory())->produce();
+    }
+}
