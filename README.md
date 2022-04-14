@@ -16,9 +16,16 @@ DB_DATABASE=database
 
 
 ```php
+use DatabaseDrivers\PDO\ConnectorFactory;
+
 require __DIR__ . '/vendor/autoload.php';
 
-$factory = new \DatabaseDrivers\Connection()
-$factory->produce()->query("SELECT * FROM users")->fetchAll();
+$factory = new ConnectorFactory();
+
+print_r($factory->produce()->query("SELECT * FROM migrations")->fetchAll());
+
+// OR
+
+// use pdo() method.
 
 ```
