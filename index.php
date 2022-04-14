@@ -1,13 +1,16 @@
 <?php
 
+use DatabaseDrivers\PDO\ConnectorFactory;
+
 require __DIR__ . '/vendor/autoload.php';
 
+$factory = new ConnectorFactory();
 
-$factory = new DatabaseDrivers\ConnectionFactory();
+print_r($factory->produce()->query("SELECT * FROM migrations")->fetchAll());
 
+// OR
 
-print_r($factory->produce()->query('SELECT * FROM table_name')->fetchAll());
-
+// pdo()
 
 
 
