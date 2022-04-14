@@ -13,7 +13,7 @@ class MySQLDriver extends Connector implements DriverInterface
         return $this->createConnection($dsn,$config,$options);
     }
 
-    public function getDsn(array $config)
+    private function getDsn(array $config)
     {
         return $this->hasSocket($config) ? $this->getSocketDsn($config) : $this->getHostDsn($config);
     }
@@ -39,7 +39,7 @@ class MySQLDriver extends Connector implements DriverInterface
 
     public function getName()
     {
-        return 'pdo_mysql';
+        return 'mysql';
     }
 
 
