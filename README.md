@@ -22,18 +22,18 @@ DB_PASSWORD=password
 DB_DATABASE=database
 ````
 
-
 ```php
-use DatabaseDrivers\PDO\ConnectorFactory;
-
 require __DIR__ . '/vendor/autoload.php';
 
-$factory = new ConnectorFactory();
+$manager = \DatabaseDrivers\Driver\Manager::run()
 
-print_r($factory->produce()->query("SELECT * FROM migrations")->fetchAll());
+/**
+* Example :
+* $manager->statement('create table table_name (column1 datatype,column1 datatype,');
+ * $manager->statement('drop table table_name');
+ * $manager->statement('insert into table_name(column1,column2') values(':column1',':column2'),[':column1'=>'value',':column2'=>'value',]);
+*/
+$manager->statement($sql,$params,$type);
 
-// OR
-
-// use pdo() method.
-
+$manager->insert($table,$params,$type);
 ```
