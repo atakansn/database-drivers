@@ -3,6 +3,7 @@
 namespace DatabaseDrivers;
 
 use DatabaseDrivers\Driver\DriverInterface;
+use DatabaseDrivers\Enums\Types;
 
 class Connection
 {
@@ -30,7 +31,7 @@ class Connection
         return $this->connection !== null;
     }
 
-    public function connect()
+    private function connect()
     {
         if($this->connection !== null) {
             return $this->connection;
@@ -43,6 +44,11 @@ class Connection
         }
 
         return $this->connection;
+    }
+
+    public function getPdo()
+    {
+        return $this->connect();
     }
 
     public function insert(string $table, array $data, array $types = [])
@@ -59,7 +65,18 @@ class Connection
             $set[] = '?';
         }
 
-        return $this->statement('INSERT INTO ' . $table . ' (' . implode(', ',$columns) . ')' . ' VALUES (' . implode(', ',$set) . ')',$values);
+        return $this->statement('INSERT INTO ' . $table . ' (' . implode(', ',$columns) . ')' . ' VALUES (' . implode(', ',$set) . ')',$values,is_string(key($types)) ? $this->valueTypes($columns,$types) : $types);
+    }
+
+    private function valueTypes(array $columns, array $types)
+    {
+        $values = [];
+
+        foreach ($columns as $columnName) {
+            $values[] = $types[$columnName] ?? Types::STRING->value;
+        }
+
+        return $values;
     }
 
     public function statement(string $sql, array $params = [], array $types = [])
