@@ -1,10 +1,10 @@
 <?php
 
-namespace DatabaseDrivers\PDO;
+namespace DatabaseDrivers\Driver\PDO;
 
 use PDO;
 
-class Connector
+class ConnectionObject
 {
     protected $options = [
         PDO::ATTR_CASE => PDO::CASE_NATURAL,
