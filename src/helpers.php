@@ -16,18 +16,18 @@ if(!function_exists('config')) {
     }
 }
 
+if(!function_exists('database_path')) {
+
+    function database_path($name)
+    {
+        return sprintf('%s/%s/',getcwd(),"database/$name");
+    }
+}
+
 if(!function_exists('env')) {
 
     function env($name,$default=null)
     {
         return (new \DatabaseDrivers\Env('.env'))->getValue($name) ?: $default;
-    }
-}
-
-if(!function_exists('pdo')) {
-
-    function pdo()
-    {
-        return (new \DatabaseDrivers\PDO\ConnectorFactory())->produce();
     }
 }
