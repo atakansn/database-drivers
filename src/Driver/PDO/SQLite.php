@@ -1,8 +1,10 @@
 <?php
 
-namespace DatabaseDrivers\PDO;
+namespace DatabaseDrivers\Driver\PDO;
 
-class SQLiteDriver extends Connector implements DriverInterface
+use DatabaseDrivers\Driver\DriverInterface;
+
+class SQLite extends ConnectionObject implements DriverInterface
 {
     public function connect(array $config)
     {

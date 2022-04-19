@@ -1,8 +1,10 @@
 <?php
 
-namespace DatabaseDrivers\PDO;
+namespace DatabaseDrivers\Driver\PDO;
 
-class MySQLDriver extends Connector implements DriverInterface
+use DatabaseDrivers\Driver\DriverInterface;
+
+class MySQL extends ConnectionObject implements DriverInterface
 {
     public function connect(array $config)
     {
