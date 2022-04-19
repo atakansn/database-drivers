@@ -31,3 +31,19 @@ if(!function_exists('env')) {
         return (new \DatabaseDrivers\Env('.env'))->getValue($name) ?: $default;
     }
 }
+
+if(!function_exists('pdo')) {
+
+    function pdo($connection = 'mysql')
+    {
+        return (\DatabaseDrivers\Driver\Manager::run($connection))->getPdo();
+    }
+}
+
+if (!function_exists('managerRun')) {
+
+    function managerRun($connectionName = 'mysql')
+    {
+        return \DatabaseDrivers\Driver\Manager::run($connectionName);
+    }
+}
