@@ -2,16 +2,7 @@
 
 return [
 
-    'default' => env('DB_CONNECTION'),
-
     'connections' => [
-
-        'sqlite' => [
-            'driver' => 'sqlite',
-            'url' => env('DATABASE_URL'),
-            'database' => env('DB_DATABASE'),#database_path('database.sqlite')
-            'foreign_key_constraints' => env('DB_FOREIGN_KEYS')
-        ],
 
         'mysql' => [
             'driver' => 'mysql',
@@ -44,6 +35,14 @@ return [
             'username' => env('DB_USERNAME'),
             'password' => env('DB_PASSWORD'),
             'charset' => 'utf8',
-        ]
+        ],
+
+        'sqlite' => [
+            'driver' => 'sqlite',
+            'url' => env('DATABASE_URL'),
+            'database' => database_path(env('DB_DATABASE')),
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS')
+        ],
+
     ]
 ];
