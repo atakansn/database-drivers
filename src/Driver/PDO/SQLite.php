@@ -2,12 +2,12 @@
 
 namespace DatabaseDrivers\Driver\PDO;
 
-use DatabaseDrivers\Driver\DriverInterface;
-
-class SQLite extends ConnectionObject implements DriverInterface
+class SQLite extends ConnectorObject
 {
     public function connect(array $config)
     {
+        $this->extControl($this->getName());
+
         $options = $this->getOptions($config);
 
         if($config['database'] === ':memory:') {

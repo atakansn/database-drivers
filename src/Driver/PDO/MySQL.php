@@ -2,17 +2,17 @@
 
 namespace DatabaseDrivers\Driver\PDO;
 
-use DatabaseDrivers\Driver\DriverInterface;
-
-class MySQL extends ConnectionObject implements DriverInterface
+class MySQL extends ConnectorObject
 {
     public function connect(array $config)
     {
+        $this->extControl($this->getName());
+
         $dsn = $this->getDsn($config);
 
         $options = $this->getOptions($config);
 
-        return $this->createConnection($dsn,$config,$options);
+        return $this->createConnection($dsn, $config, $options);
     }
 
     private function getDsn(array $config)
@@ -32,16 +32,30 @@ class MySQL extends ConnectionObject implements DriverInterface
 
     protected function getHostDsn(array $config)
     {
-        extract($config,EXTR_SKIP);
+        $dsn = 'mysql:';
 
-        return isset($port)
-            ? "mysql:host={$host};port={$port};dbname={$database}"
-            : "mysql:host={$host};dbname={$database}";
+        if (isset($config['host']) && !empty($config['host'])) {
+            $dsn .= 'host=' . $config['host'] . ';';
+        }
+
+        if (isset($config['database'])) {
+            $dsn .= 'dbname=' . $config['database'] . ';';
+        }
+
+        if (isset($config['port'])) {
+            $dsn .= 'port=' . $config['port'] . ';';
+        }
+
+        if (isset($config['charset'])) {
+            $dsn .= 'charset=' . $config['charset'] . ';';
+        }
+
+        return $dsn;
     }
 
     public function getName()
     {
-        return 'mysql';
+        return 'pdo_mysql';
     }
 
 

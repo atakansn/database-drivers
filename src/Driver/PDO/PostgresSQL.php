@@ -2,13 +2,13 @@
 
 namespace DatabaseDrivers\Driver\PDO;
 
-use DatabaseDrivers\Driver\DriverInterface;
-
-class PostgresSQL extends ConnectionObject implements DriverInterface
+class PostgresSQL extends ConnectorObject
 {
 
     public function connect(array $config)
     {
+        $this->extControl($this->getName());
+
         return $this->createConnection($this->getDsn($config),$config,$this->getOptions($config));
     }
 
