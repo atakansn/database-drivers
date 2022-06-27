@@ -36,7 +36,7 @@ if(!function_exists('pdo')) {
 
     function pdo($connection = 'mysql')
     {
-        return (\DatabaseDrivers\Driver\Manager::run($connection))->getPdo();
+        return (\DatabaseDrivers\Driver\ConnectionManager::run($connection))->getPdo();
     }
 }
 
@@ -44,6 +44,6 @@ if (!function_exists('managerRun')) {
 
     function managerRun($connectionName = 'mysql')
     {
-        return \DatabaseDrivers\Driver\Manager::run($connectionName);
+        return \DatabaseDrivers\Driver\ConnectionManager::run($connectionName);
     }
 }
