@@ -1,7 +1,7 @@
 {
   "name": "php/database-drivers",
   "description": "An assembly of php sqllite-database drivers.",
-  "type": "library",
+  "type": "package",
   "license": "MIT",
   "autoload": {
     "psr-4": {
