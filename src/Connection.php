@@ -3,11 +3,12 @@
 namespace DatabaseDrivers;
 
 use DatabaseDrivers\Driver\DriverInterface;
-use DatabaseDrivers\Enums\Types;
+use PDO;
+use PDOException;
+use Exception;
 
 class Connection
 {
-
     private array $config;
 
     private $driver;
@@ -16,7 +17,7 @@ class Connection
 
     private $connectionName;
 
-    public function __construct(DriverInterface $driver,array $config,string $connectionName)
+    public function __construct(DriverInterface $driver, array $config, string $connectionName)
     {
         $this->config = $config;
 
@@ -31,67 +32,102 @@ class Connection
         return $this->connection !== null;
     }
 
-    private function connect()
+    public function connect()
     {
-        if($this->connection !== null) {
-            return $this->connection;
+        if ($this->connection !== null) {
+            return false;
         }
 
         try {
             $this->connection = $this->driver->connect($this->config['connections'][$this->connectionName]);
-        }catch (\Exception $e) {
-            echo $e->getMessage();
+        } catch (Exception $e) {
+            $this->close();
+            throw new PDOException($e->getMessage(),$e->getCode());
         }
+
+        return true;
+    }
+
+    public function getPdo(): PDO
+    {
+        $this->connect();
 
         return $this->connection;
     }
 
-    public function getPdo()
+    public function insert(string $table, array $data)
     {
-        return $this->connect();
-    }
-
-    public function insert(string $table, array $data, array $types = [])
-    {
-        if(count($data) === 0) {
+        if (empty($data)) {
             return $this->statement('INSERT INTO ' . $table . ' () VALUES ()');
         }
 
-        $columns = $values = $set = [];
+        $columns = $params = $set = [];
+
+        foreach ($data as $columnName => $value) {
+            $columns[] = $columnName;
+            $params[] = $value;
+            $set[] = '?';
+        }
+
+        return $this->statement(
+            'INSERT INTO ' . $table . ' (' . implode(', ', $columns) . ')' . ' VALUES (' . implode(', ', $set) . ')',
+            $params
+        );
+    }
+
+    public function update($table, array $data, array $condition)
+    {
+        $columns = $values = $conditions = $set = [];
 
         foreach ($data as $columnName => $value) {
             $columns[] = $columnName;
             $values[] = $value;
-            $set[] = '?';
+            $set[] = $columnName . ' = ?';
         }
 
-        return $this->statement('INSERT INTO ' . $table . ' (' . implode(', ',$columns) . ')' . ' VALUES (' . implode(', ',$set) . ')',$values,is_string(key($types)) ? $this->valueTypes($columns,$types) : $types);
+        $this->conditionReferance($condition, $columns, $values, $conditions);
+
+        return $this->statement(
+            'UPDATE ' . $table . ' SET ' . implode(', ', $set) . ' WHERE ' . implode(' AND ', $conditions)
+        );
     }
 
-    private function valueTypes(array $columns, array $types)
+    public function delete(string $table, array $data)
     {
-        $values = [];
+        $columns = $values = $conditions = [];
 
-        foreach ($columns as $columnName) {
-            $values[] = $types[$columnName] ?? Types::STRING->value;
-        }
+        $this->conditionReferance($data, $columns, $values, $conditions);
 
-        return $values;
+        return $this->statement(
+            'DELETE FROM ' . $table . ' WHERE ' . implode(' AND ', $conditions),
+            $values
+        );
     }
 
-    public function statement(string $sql, array $params = [], array $types = [])
+    private function conditionReferance(array $criteria, array &$columns, array &$values, array &$conditions)
+    {
+        foreach ($criteria as $key => $value) {
+            if ($value === null) {
+                $conditions[] = $key . ' IS NULL';
+                continue;
+            }
+
+            $columns[] = $key;
+            $values[] = $value;
+            $conditions[] = $key . ' = ? ';
+        }
+
+    }
+
+    public function statement(string $sql, array $params = [])
     {
         $connection = $this->connect();
 
         try {
-            if(count($params) > 0) {
+            if (!empty($params)) {
                 $stmt = $connection->prepare($sql);
 
-                if(count($types) > 0) {
-                    $result = $stmt->execute();
-                }else{
-                    $result = $stmt->execute($params);
-                }
+                $result = $stmt->execute();
 
                 return $result ?: false;
 
@@ -99,9 +135,19 @@ class Connection
 
             return $connection->exec($sql);
 
-        }catch (\Exception $exception) {
-           echo $exception->getMessage();
+        } catch (\Exception $exception) {
+            echo $exception->getMessage();
         }
+    }
+
+    public function getDriver()
+    {
+        return $this->driver;
+    }
+
+    public function close()
+    {
+        return $this->connection = null;
     }
 
 }
