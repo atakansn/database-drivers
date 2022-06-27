@@ -42,7 +42,7 @@ class Connection
             $this->connection = $this->driver->connect($this->config['connections'][$this->connectionName]);
         } catch (Exception $e) {
             $this->close();
-            throw new PDOException($e->getMessage(),$e->getCode());
+            throw new PDOException($e->getMessage(), $e->getCode());
         }
 
         return true;
