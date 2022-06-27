@@ -1,23 +1,26 @@
 {
-    "name": "php/database-drivers",
-    "description": "An assembly of php database drivers.",
-    "type": "library",
-    "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "DatabaseDrivers\\": "src/"
-        },
-        "files": ["src/helpers.php"]
+  "name": "php/database-drivers",
+  "description": "An assembly of php sqllite-database drivers.",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "DatabaseDrivers\\": "src/"
     },
-    "authors": [
-        {
-            "name": "Atakan Senturk",
-            "email": "atkansenturk@protonmail.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {
-        "vlucas/phpdotenv": "v5.4.1",
-      "ext-pdo": "*"
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+  "authors": [
+    {
+      "name": "Atakan Senturk",
+      "email": "atkansenturk@protonmail.com"
     }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "vlucas/phpdotenv": "v5.4.1",
+    "ext-pdo": "*",
+    "php" : "^8.0"
+  }
 }

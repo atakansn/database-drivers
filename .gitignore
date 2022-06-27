@@ -1,4 +1,6 @@
 .idea
 vendor
 .vscode
+composer.lock
+.env
 
