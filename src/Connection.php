@@ -75,7 +75,7 @@ class Connection
         );
     }
 
-    public function update($table, array $data, array $condition)
+    public function update(string $table, array $data, array $condition)
     {
         $columns = $values = $conditions = $set = [];
 
@@ -88,7 +88,8 @@ class Connection
         $this->conditionReferance($condition, $columns, $values, $conditions);
 
         return $this->statement(
-            'UPDATE ' . $table . ' SET ' . implode(', ', $set) . ' WHERE ' . implode(' AND ', $conditions)
+            'UPDATE ' . $table . ' SET ' . implode(', ', $set) . ' WHERE ' . implode(' AND ', $conditions),
+            $values
         );
     }
 
@@ -121,13 +122,13 @@ class Connection
 
     public function statement(string $sql, array $params = [])
     {
-        $connection = $this->connect();
+        $connection = $this->getPdo();
 
         try {
             if (!empty($params)) {
                 $stmt = $connection->prepare($sql);
 
-                $result = $stmt->execute();
+                $result = $stmt->execute($params);
 
                 return $result ?: false;
 
