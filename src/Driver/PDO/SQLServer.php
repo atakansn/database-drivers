@@ -5,13 +5,22 @@ namespace DatabaseDrivers\Driver\PDO;
 class SQLServer extends ConnectorObject
 {
 
+    /**
+     * @param array $config
+     * @return mixed|\PDO
+     * @throws \DatabaseDrivers\Exceptions\DriverExtensionNotFoundException
+     */
     public function connect(array $config)
     {
-        $this->extControl($this->getName());
+        $this->extensionControl($this->getName());
 
         return $this->createConnection($this->getDsn($config), $config, $this->getOptions($config));
     }
 
+    /**
+     * @param array $config
+     * @return mixed|string|void
+     */
     private function getDsn(array $config)
     {
         if (isset($config['odbc']) && in_array('odbc', $this->getAvailableDrivers(), true)) {
@@ -26,11 +35,19 @@ class SQLServer extends ConnectorObject
 
     }
 
+    /**
+     * @param array $config
+     * @return mixed|string
+     */
     private function getOdbcDsn(array $config)
     {
         return $config['odbc_dsn'] ?? '';
     }
 
+    /**
+     * @param array $config
+     * @return string
+     */
     private function getDblibDsn(array $config)
     {
         return $this->buildDsnString('dblib',
@@ -38,10 +55,14 @@ class SQLServer extends ConnectorObject
                 'host' => $this->buildHostWithPort($config, ':'),
                 'dbname' => $config['database'],
             ],
-            array_intersect_key($config, array_flip(['appname', 'charset', 'version']))
-        ));
+                array_intersect_key($config, array_flip(['appname', 'charset', 'version']))
+            ));
     }
 
+    /**
+     * @param array $config
+     * @return string
+     */
     private function getSQLSrvDsn(array $config)
     {
         $dsn = [
@@ -103,6 +124,11 @@ class SQLServer extends ConnectorObject
         return $this->buildDsnString('sqlsrv', $dsn);
     }
 
+    /**
+     * @param array $config
+     * @param string|null $separator
+     * @return mixed|string
+     */
     private function buildHostWithPort(array $config, string $separator = null)
     {
         if (!empty($config['port'])) {
@@ -112,6 +138,11 @@ class SQLServer extends ConnectorObject
         return $config['host'];
     }
 
+    /**
+     * @param string $driver
+     * @param array $arguments
+     * @return string
+     */
     private function buildDsnString(string $driver, array $arguments)
     {
         return $driver . ':' . implode(';', array_map(static function ($keys) use ($arguments) {
@@ -121,6 +152,9 @@ class SQLServer extends ConnectorObject
             ));
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return 'pdo_sqlsrv';

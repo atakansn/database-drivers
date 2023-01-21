@@ -38,7 +38,7 @@ Gerekli paketleri yükleyin
   composer install
 ```
 
-## Kullanım/Örnekler
+## Usage/Examples
 
 ````dotenv
 DB_CONNECTION=database-driver
@@ -54,16 +54,16 @@ require __DIR__ . '/vendor/autoload.php';
 
 $manager = \DatabaseDrivers\Driver\ConnectionManager::run()
 
-$manager->insert('test_table',[
-    'name'=>'Foo'
+$manager->insert('test_table', [
+    'name' => 'Foo'
 ]);
 
 $manager->update('test_table',
     ['name' => 'Foo Bar'], // new value
-    ['id'=>2] // conditions
+    ['id'=> 2] // conditions
 );
 
-$manager->delete('test_table',[
+$manager->delete('test_table', [
     'id' => 3
 ]);
 ```
@@ -135,4 +135,3 @@ Can configure PDO connection settings, disable.
 ````
 
 
-  

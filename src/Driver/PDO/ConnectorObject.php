@@ -55,9 +55,9 @@ abstract class ConnectorObject implements DriverInterface
         $this->options = $options;
     }
 
-    protected function extControl(...$extName)
+    protected function extensionControl(...$extName)
     {
-        $this->checkPDO();
+        $this->checkPDOExtension();
 
         foreach ($extName as $ext) {
             if (!extension_loaded($ext)) {
@@ -68,7 +68,10 @@ abstract class ConnectorObject implements DriverInterface
         return true;
     }
 
-    protected function checkPDO()
+    /**
+     * @throws PDOExtensionNotFoundException
+     */
+    protected function checkPDOExtension()
     {
         if(!extension_loaded('pdo')) {
             throw new PDOExtensionNotFoundException('PDO extension not found');

@@ -25,25 +25,25 @@ class ConnectionManager
      */
     public static function run(string $connectionName = null)
     {
-        $connection = $connectionName ?? env('DB_DRIVER', 'mysql');
+        $connectionName ??= env('DB_CONNECTION', 'mysql');
 
-        $configFile = config('database');
+        $configFile = config('database')['connections'][$connectionName];
 
-        $driver = self::matchDriver($connection);
+        $driver = self::matchDriver($connectionName);
 
         try {
-            return new Connection($driver, $configFile, $connection);
+            return new Connection($driver, $configFile, $connectionName);
         } catch (Throwable $t) {
-            throw new InvalidParameterException($t->getMessage(),$t->getCode());
+            throw new InvalidParameterException($t->getMessage(), $t->getCode());
         }
     }
 
     /**
-     * @param $config
+     * @param string $config
      * @return MySQL|PostgresSQL|SQLite|SQLServer
      * @throws UnspecifiedDriverException
      */
-    private static function matchDriver($config)
+    private static function matchDriver(string $config)
     {
         if (!isset($config)) {
             throw new UnspecifiedDriverException("A driver must be specified");

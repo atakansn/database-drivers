@@ -9,14 +9,31 @@ use Exception;
 
 class Connection
 {
+    /**
+     * @var array
+     */
     private array $config;
 
-    private $driver;
+    /**
+     * @var DriverInterface
+     */
+    private DriverInterface $driver;
 
+    /**
+     * @var
+     */
     private $connection;
 
-    private $connectionName;
+    /**
+     * @var string
+     */
+    private string $connectionName;
 
+    /**
+     * @param DriverInterface $driver
+     * @param array $config
+     * @param string $connectionName
+     */
     public function __construct(DriverInterface $driver, array $config, string $connectionName)
     {
         $this->config = $config;
@@ -27,11 +44,17 @@ class Connection
 
     }
 
+    /**
+     * @return bool
+     */
     public function isConnected()
     {
         return $this->connection !== null;
     }
 
+    /**
+     * @return bool
+     */
     public function connect()
     {
         if ($this->connection !== null) {
@@ -39,7 +62,7 @@ class Connection
         }
 
         try {
-            $this->connection = $this->driver->connect($this->config['connections'][$this->connectionName]);
+            $this->connection = $this->driver->connect($this->config);
         } catch (Exception $e) {
             $this->close();
             throw new PDOException($e->getMessage(), $e->getCode());
@@ -48,6 +71,9 @@ class Connection
         return true;
     }
 
+    /**
+     * @return PDO
+     */
     public function getPdo(): PDO
     {
         $this->connect();
@@ -55,6 +81,11 @@ class Connection
         return $this->connection;
     }
 
+    /**
+     * @param string $table
+     * @param array $data
+     * @return bool|int|null
+     */
     public function insert(string $table, array $data)
     {
         if (empty($data)) {
@@ -75,6 +106,12 @@ class Connection
         );
     }
 
+    /**
+     * @param string $table
+     * @param array $data
+     * @param array $condition
+     * @return bool|int|null
+     */
     public function update(string $table, array $data, array $condition)
     {
         $columns = $values = $conditions = $set = [];
@@ -93,6 +130,11 @@ class Connection
         );
     }
 
+    /**
+     * @param string $table
+     * @param array $data
+     * @return bool|int|null
+     */
     public function delete(string $table, array $data)
     {
         $columns = $values = $conditions = [];
@@ -105,6 +147,13 @@ class Connection
         );
     }
 
+    /**
+     * @param array $criteria
+     * @param array $columns
+     * @param array $values
+     * @param array $conditions
+     * @return void
+     */
     private function conditionReferance(array $criteria, array &$columns, array &$values, array &$conditions)
     {
         foreach ($criteria as $key => $value) {
@@ -120,6 +169,11 @@ class Connection
 
     }
 
+    /**
+     * @param string $sql
+     * @param array $params
+     * @return bool|int|void
+     */
     public function statement(string $sql, array $params = [])
     {
         $connection = $this->getPdo();
@@ -141,11 +195,17 @@ class Connection
         }
     }
 
+    /**
+     * @return DriverInterface
+     */
     public function getDriver()
     {
         return $this->driver;
     }
 
+    /**
+     * @return null
+     */
     public function close()
     {
         return $this->connection = null;
